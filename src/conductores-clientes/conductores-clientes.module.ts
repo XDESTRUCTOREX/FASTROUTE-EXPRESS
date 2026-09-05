@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
-import { ConductoresService } from './conductores/conductores.service';
+import { CustomersModule } from '../customers/customers.module';
+import { DriversModule } from '../drivers/drivers.module';
 
 @Module({
-  providers: [ConductoresService]
+  imports: [DriversModule, CustomersModule],
 })
 export class ConductoresClientesModule {}
