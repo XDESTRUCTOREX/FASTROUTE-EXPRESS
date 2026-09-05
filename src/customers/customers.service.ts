@@ -29,8 +29,11 @@ export class CustomersService {
     return this.customersRepository.save(customer);
   }
 
-  findAll(): Promise<Customer[]> {
-    return this.customersRepository.find({ order: { createdAt: 'DESC' } });
+  findAll(email?: string): Promise<Customer[]> {
+    return this.customersRepository.find({
+      where: email === undefined ? undefined : { email },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async findOne(id: number): Promise<Customer> {

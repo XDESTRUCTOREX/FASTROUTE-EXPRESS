@@ -29,8 +29,11 @@ export class DriversService {
     return this.driversRepository.save(driver);
   }
 
-  findAll(): Promise<Driver[]> {
-    return this.driversRepository.find({ order: { createdAt: 'DESC' } });
+  findAll(isActive?: boolean): Promise<Driver[]> {
+    return this.driversRepository.find({
+      where: isActive === undefined ? undefined : { isActive },
+      order: { createdAt: 'DESC' },
+    });
   }
 
   async findOne(id: number): Promise<Driver> {
