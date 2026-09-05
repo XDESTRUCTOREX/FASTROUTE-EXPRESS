@@ -1,8 +1,4 @@
-import {
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Package } from '../../package/entities/package.entity';
 
 @Entity('shipments')

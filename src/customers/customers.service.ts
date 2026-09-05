@@ -52,18 +52,13 @@ export class CustomersService {
   ): Promise<Customer> {
     const customer = await this.findOne(id);
 
-    if (
-      updateCustomerDto.email &&
-      updateCustomerDto.email !== customer.email
-    ) {
+    if (updateCustomerDto.email && updateCustomerDto.email !== customer.email) {
       const existingCustomer = await this.customersRepository.findOne({
         where: { email: updateCustomerDto.email },
       });
 
       if (existingCustomer) {
-        throw new ConflictException(
-          'El correo electrónico ya está registrado',
-        );
+        throw new ConflictException('El correo electrónico ya está registrado');
       }
     }
 

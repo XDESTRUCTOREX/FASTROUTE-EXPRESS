@@ -4,7 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PackageModule } from './package/package.module';
-import { ConductoresClientesModule } from './conductores-clientes/conductores-clientes.module';
+import { DriversModule } from './drivers/drivers.module';
+import { CustomersModule } from './customers/customers.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { ConductoresClientesModule } from './conductores-clientes/conductores-cl
       }),
     }),
     PackageModule,
-    ConductoresClientesModule,
+    DriversModule,
+    CustomersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
