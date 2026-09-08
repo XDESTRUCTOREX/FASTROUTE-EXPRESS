@@ -1,30 +1,22 @@
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class CreateDriverDto {
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
-  )
+  // Sanitizacion: quita espacios sobrantes
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
   @IsString()
   @IsNotEmpty()
-  @MinLength(2)
-  @MaxLength(120)
-  fullName!: string;
+  @MaxLength(100)
+  name: string;
 
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
-  )
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toUpperCase() : value))
   @IsString()
   @IsNotEmpty()
-  @MinLength(3)
-  @MaxLength(30)
-  licenseNumber!: string;
+  @MaxLength(20)
+  license: string;
 
-  @Transform(({ value }: { value: unknown }) =>
-    typeof value === 'string' ? value.trim() : value,
-  )
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  @MaxLength(30)
-  phone!: string;
+  @MaxLength(20)
+  phone?: string;
 }

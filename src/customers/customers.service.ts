@@ -20,11 +20,9 @@ export class CustomersService {
     const existingCustomer = await this.customersRepository.findOne({
       where: { email: createCustomerDto.email },
     });
-
     if (existingCustomer) {
       throw new ConflictException('El correo electrónico ya está registrado');
     }
-
     const customer = this.customersRepository.create(createCustomerDto);
     return this.customersRepository.save(customer);
   }
@@ -38,11 +36,9 @@ export class CustomersService {
 
   async findOne(id: number): Promise<Customer> {
     const customer = await this.customersRepository.findOne({ where: { id } });
-
     if (!customer) {
       throw new NotFoundException(`No existe un cliente con el ID ${id}`);
     }
-
     return customer;
   }
 
@@ -51,23 +47,25 @@ export class CustomersService {
     updateCustomerDto: UpdateCustomerDto,
   ): Promise<Customer> {
     const customer = await this.findOne(id);
-
     if (updateCustomerDto.email && updateCustomerDto.email !== customer.email) {
       const existingCustomer = await this.customersRepository.findOne({
         where: { email: updateCustomerDto.email },
       });
-
       if (existingCustomer) {
         throw new ConflictException('El correo electrónico ya está registrado');
       }
     }
-
     Object.assign(customer, updateCustomerDto);
     return this.customersRepository.save(customer);
   }
 
-  async remove(id: number): Promise<void> {
+  async remove(id: number): Promise<{ message: string }> {
     const customer = await this.findOne(id);
-    await this.customersRepository.remove(customer);
+    try {
+      await this.customersRepository.remove(customer);
+      return { message: `Cliente "${customer.name}" eliminado correctamente` };
+    } catch {
+      throw new ConflictException('No se puede eliminar: el cliente tiene envios asociados');
+    }
   }
 }

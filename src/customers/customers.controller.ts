@@ -34,11 +34,8 @@ export class CustomersController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateCustomerDto: UpdateCustomerDto,
-  ) {
-    return this.customersService.update(id, updateCustomerDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateCustomerDto) {
+    return this.customersService.update(id, dto);
   }
 
   @Delete(':id')
