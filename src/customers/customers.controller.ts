@@ -1,22 +1,31 @@
 import {
-  Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Patch,
+  Post,
+  Query,
 } from '@nestjs/common';
-import { CustomersService } from './customers.service';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
+import { CustomersService } from './customers.service';
 
 @Controller('customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
   @Post()
-  create(@Body() dto: CreateCustomerDto) {
-    return this.customersService.create(dto);
+  create(@Body() createCustomerDto: CreateCustomerDto) {
+    return this.customersService.create(createCustomerDto);
   }
 
   @Get()
-  findAll() {
-    return this.customersService.findAll();
+  findAll(@Query('email') email?: string) {
+    const normalizedEmail = email?.trim().toLowerCase();
+    return this.customersService.findAll(normalizedEmail);
   }
 
   @Get(':id')

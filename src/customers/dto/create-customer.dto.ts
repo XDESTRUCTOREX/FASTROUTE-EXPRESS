@@ -1,20 +1,56 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
-import { Transform } from 'class-transformer';
+    private readonly customersRepository: Repository<Customer>,
+  ) {}
 
-export class CreateCustomerDto {
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
-  @IsString()
-  @IsNotEmpty()
-  @MaxLength(100)
-  name: string;
+  async create(createCustomerDto: CreateCustomerDto): Promise<Customer> {
+    const existingCustomer = await this.customersRepository.findOne({
+      where: { email: createCustomerDto.email },
+    });
+    if (existingCustomer) {
+      throw new ConflictException('El correo electrónico ya está registrado');
+    }
+    const customer = this.customersRepository.create(createCustomerDto);
+    return this.customersRepository.save(customer);
+  }
 
-  // Sanitizacion: quita espacios y pasa a minusculas antes de validar
-  @Transform(({ value }) => (typeof value === 'string' ? value.trim().toLowerCase() : value))
-  @IsEmail({}, { message: 'Debe proporcionar un email valido' })
-  email: string;
+  findAll(email?: string): Promise<Customer[]> {
+    return this.customersRepository.find({
+      where: email === undefined ? undefined : { email },
+      order: { createdAt: 'DESC' },
+    });
+  }
 
-  @IsOptional()
-  @IsString()
-  @MaxLength(20)
-  phone?: string;
+  async findOne(id: number): Promise<Customer> {
+    const customer = await this.customersRepository.findOne({ where: { id } });
+    if (!customer) {
+      throw new NotFoundException(`No existe un cliente con el ID ${id}`);
+    }
+    return customer;
+  }
+
+  async update(
+    id: number,
+    updateCustomerDto: UpdateCustomerDto,
+  ): Promise<Customer> {
+    const customer = await this.findOne(id);
+    if (updateCustomerDto.email && updateCustomerDto.email !== customer.email) {
+      const existingCustomer = await this.customersRepository.findOne({
+        where: { email: updateCustomerDto.email },
+      });
+      if (existingCustomer) {
+        throw new ConflictException('El correo electrónico ya está registrado');
+      }
+    }
+    Object.assign(customer, updateCustomerDto);
+    return this.customersRepository.save(customer);
+  }
+
+  async remove(id: number): Promise<{ message: string }> {
+    const customer = await this.findOne(id);
+    try {
+      await this.customersRepository.remove(customer);
+      return { message: `Cliente "${customer.name}" eliminado correctamente` };
+    } catch {
+      throw new ConflictException('No se puede eliminar: el cliente tiene envios asociados');
+    }
+  }
 }
