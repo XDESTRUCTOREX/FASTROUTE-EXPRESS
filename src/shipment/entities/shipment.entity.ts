@@ -7,6 +7,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Branch } from '../../sucursales/entities/branch.entity';
+import { Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Package } from '../../package/entities/package.entity';
 
 @Entity('shipments')
 export class Shipment {
@@ -33,4 +35,8 @@ export class Shipment {
   })
   @JoinColumn({ name: 'destination_branch_id' })
   destinationBranch: Branch | undefined;
+  id!: number;
+
+  @OneToMany(() => Package, (packageEntity) => packageEntity.shipment)
+  packages!: Package[];
 }
