@@ -4,8 +4,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PackageModule } from './package/package.module';
-import { Package } from './package/entities/package.entity';
+import { PackagesModule } from './packages/packages.module';
+import { Package } from './packages/package.entity';
 
 @Module({
   imports: [
@@ -28,7 +28,7 @@ import { Package } from './package/entities/package.entity';
       }),
     }),
 
-    PackageModule,
+    PackagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

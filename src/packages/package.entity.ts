@@ -9,9 +9,9 @@ export class Package {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column('decimal', { precision: 10, scale: 2 })
-  weight: number;
-
-  @Column({ type: 'text' })
+  @Column({ type: 'varchar', length: 200 })
   description: string;
+
+  @Column({ type: 'decimal', precision: 8, scale: 2 })
+  weight: number;
 }
