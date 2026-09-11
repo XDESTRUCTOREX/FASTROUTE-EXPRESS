@@ -1,10 +1,5 @@
+import { IsNotEmpty, IsPositive, IsString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
-import {
-  IsNotEmpty,
-  IsPositive,
-  IsString,
-  MaxLength,
-} from 'class-validator';
 
 export class CreatePackageDto {
   @IsString()
@@ -12,7 +7,8 @@ export class CreatePackageDto {
   @MaxLength(200)
   description: string;
 
+  // @Type convierte a numero el valor que llega por JSON
   @Type(() => Number)
-  @IsPositive()
+  @IsPositive({ message: 'El peso debe ser un numero positivo' })
   weight: number;
 }

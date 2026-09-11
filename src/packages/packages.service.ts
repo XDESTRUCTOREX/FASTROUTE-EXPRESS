@@ -2,27 +2,18 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class PackagesService {
-  // Tarifa fija por kilogramo.
+  // Tarifa fija por kilo
   readonly tarifaPorKilo = 5000;
 
-  calcularPesoTotal(
-    packages: Array<{ weight: number }>,
-  ): number {
-    const total = packages.reduce(
-      (suma, pkg) => suma + Number(pkg.weight),
-      0,
-    );
-
+  // Suma el peso acumulado de todos los paquetes del envio
+  calcularPesoTotal(packages: Array<{ weight: number }>): number {
+    const total = packages.reduce((suma, pkg) => suma + Number(pkg.weight), 0);
     return Number(total.toFixed(2));
   }
 
-  calcularCostoTotal(
-    packages: Array<{ weight: number }>,
-  ): number {
+  // Aplica la tarifa fija por kilo al peso total
+  calcularCostoTotal(packages: Array<{ weight: number }>): number {
     const pesoTotal = this.calcularPesoTotal(packages);
-
-    return Number(
-      (pesoTotal * this.tarifaPorKilo).toFixed(2),
-    );
+    return Number((pesoTotal * this.tarifaPorKilo).toFixed(2));
   }
 }
