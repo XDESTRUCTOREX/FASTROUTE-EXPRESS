@@ -25,15 +25,27 @@ export class ShipmentsService {
 
   // ===== Creacion de envios con costo automatico =====
   async create(dto: CreateShipmentDto): Promise<Shipment> {
-    const customer = await this.customerRepository.findOneBy({ id: dto.customerId });
-    if (!customer) throw new NotFoundException(`Cliente con id ${dto.customerId} no encontrado`);
+    const customer = await this.customerRepository.findOneBy({
+      id: dto.customerId,
+    });
+    if (!customer)
+      throw new NotFoundException(
+        `Cliente con id ${dto.customerId} no encontrado`,
+      );
 
     const driver = await this.driverRepository.findOneBy({ id: dto.driverId });
-    if (!driver) throw new NotFoundException(`Conductor con id ${dto.driverId} no encontrado`);
+    if (!driver)
+      throw new NotFoundException(
+        `Conductor con id ${dto.driverId} no encontrado`,
+      );
 
-    const originBranch = await this.branchRepository.findOneBy({ id: dto.originBranchId });
+    const originBranch = await this.branchRepository.findOneBy({
+      id: dto.originBranchId,
+    });
     if (!originBranch) {
-      throw new NotFoundException(`Sucursal con id ${dto.originBranchId} no encontrada`);
+      throw new NotFoundException(
+        `Sucursal con id ${dto.originBranchId} no encontrada`,
+      );
     }
 
     // Costo total: tarifa fija por kilo x peso total de los paquetes
@@ -126,15 +138,21 @@ export class ShipmentsService {
       .leftJoinAndSelect('shipment.originBranch', 'branch');
 
     if (filters.customerId) {
-      queryBuilder.andWhere('customer.id = :customerId', { customerId: filters.customerId });
+      queryBuilder.andWhere('customer.id = :customerId', {
+        customerId: filters.customerId,
+      });
     }
 
     if (filters.branchId) {
-      queryBuilder.andWhere('branch.id = :branchId', { branchId: filters.branchId });
+      queryBuilder.andWhere('branch.id = :branchId', {
+        branchId: filters.branchId,
+      });
     }
 
     if (filters.date) {
-      queryBuilder.andWhere('DATE(shipment.createdAt) = :date', { date: filters.date });
+      queryBuilder.andWhere('DATE(shipment.createdAt) = :date', {
+        date: filters.date,
+      });
     }
 
     queryBuilder
@@ -155,7 +173,8 @@ export class ShipmentsService {
 
   async update(id: number, dto: UpdateShipmentDto): Promise<Shipment> {
     const shipment = await this.shipmentRepository.findOneBy({ id });
-    if (!shipment) throw new NotFoundException(`Envio con id ${id} no encontrado`);
+    if (!shipment)
+      throw new NotFoundException(`Envio con id ${id} no encontrado`);
 
     if (dto.status) shipment.status = dto.status;
     if (dto.destination) shipment.destination = dto.destination;
@@ -165,8 +184,11 @@ export class ShipmentsService {
 
   async remove(id: number): Promise<{ message: string }> {
     const shipment = await this.shipmentRepository.findOneBy({ id });
-    if (!shipment) throw new NotFoundException(`Envio con id ${id} no encontrado`);
+    if (!shipment)
+      throw new NotFoundException(`Envio con id ${id} no encontrado`);
     await this.shipmentRepository.remove(shipment);
-    return { message: `Envio ${shipment.trackingCode} eliminado correctamente` };
+    return {
+      message: `Envio ${shipment.trackingCode} eliminado correctamente`,
+    };
   }
 }

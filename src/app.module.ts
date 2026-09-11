@@ -1,56 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { Branch } from './sucursales/entities/branch.entity';
-import { Shipment } from './shipment/entities/shipment.entity';
-import { ShipmentModule } from './shipment/shipment.module';
-
-@Module({
-  imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST ?? 'localhost',
-      port: Number(process.env.DB_PORT ?? 3306),
-      username: process.env.DB_USERNAME ?? 'root',
-      password: process.env.DB_PASSWORD ?? '',
-      database: process.env.DB_DATABASE ?? 'fastroute',
-      entities: [Branch, Shipment],
-      synchronize: process.env.DB_SYNCHRONIZE === 'true',
-    }),
-    ShipmentModule,
-import { BranchesModule } from './branches/branches.module';
-import { DriversModule } from './drivers/drivers.module';
-import { CustomersModule } from './customers/customers.module';
-import { PackagesModule } from './packages/packages.module';
-import { ShipmentsModule } from './shipments/shipments.module';
-
-@Module({
-  imports: [
-    // Conexion a MySQL con variables de entorno (.env)
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DB_DATABASE,
-      entities: [__dirname + '/**/*.entity{.ts,.js}'],
-      synchronize: process.env.DB_SYNCHRONIZE === 'true',
-    }),
-    BranchesModule,
-    DriversModule,
-    CustomersModule,
-    PackagesModule,
-    ShipmentsModule,
-  ],
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PackageModule } from './package/package.module';
-import { DriversModule } from './drivers/drivers.module';
+import { BranchesModule } from './branches/branches.module';
 import { CustomersModule } from './customers/customers.module';
+import { DriversModule } from './drivers/drivers.module';
+import { PackagesModule } from './packages/packages.module';
+import { ShipmentsModule } from './shipments/shipments.module';
 
 @Module({
   imports: [
@@ -65,12 +22,16 @@ import { CustomersModule } from './customers/customers.module';
         password: configService.get<string>('DB_PASSWORD', ''),
         database: configService.get<string>('DB_DATABASE', 'fastroute'),
         autoLoadEntities: true,
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        synchronize:
+          configService.get<string>('DB_SYNCHRONIZE', 'false') === 'true' &&
+          configService.get<string>('NODE_ENV') !== 'production',
       }),
     }),
-    PackageModule,
+    BranchesModule,
     DriversModule,
     CustomersModule,
+    PackagesModule,
+    ShipmentsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
