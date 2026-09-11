@@ -8,20 +8,13 @@ describe('PackagesService', () => {
   });
 
   it('debe calcular correctamente el peso total', () => {
-    const packages = [
-      { weight: 2 },
-      { weight: 3.5 },
-      { weight: 1.5 },
-    ];
+    const packages = [{ weight: 2 }, { weight: 3.5 }, { weight: 1.5 }];
 
     expect(service.calcularPesoTotal(packages)).toBe(7);
   });
 
   it('debe calcular correctamente el costo total', () => {
-    const packages = [
-      { weight: 2 },
-      { weight: 3 },
-    ];
+    const packages = [{ weight: 2 }, { weight: 3 }];
 
     expect(service.calcularCostoTotal(packages)).toBe(25000);
   });

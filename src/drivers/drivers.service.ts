@@ -17,9 +17,13 @@ export class DriversService {
   ) {}
 
   async create(dto: CreateDriverDto): Promise<Driver> {
-    const exists = await this.driverRepository.findOneBy({ license: dto.license });
+    const exists = await this.driverRepository.findOneBy({
+      license: dto.license,
+    });
     if (exists) {
-      throw new ConflictException(`Ya existe un conductor con la licencia ${dto.license}`);
+      throw new ConflictException(
+        `Ya existe un conductor con la licencia ${dto.license}`,
+      );
     }
     const driver = this.driverRepository.create(dto);
     return this.driverRepository.save(driver);
@@ -33,7 +37,8 @@ export class DriversService {
 
   async findOne(id: number): Promise<Driver> {
     const driver = await this.driverRepository.findOneBy({ id });
-    if (!driver) throw new NotFoundException(`Conductor con id ${id} no encontrado`);
+    if (!driver)
+      throw new NotFoundException(`Conductor con id ${id} no encontrado`);
     return driver;
   }
 
@@ -49,7 +54,9 @@ export class DriversService {
       await this.driverRepository.remove(driver);
       return { message: `Conductor "${driver.name}" eliminado correctamente` };
     } catch {
-      throw new ConflictException('No se puede eliminar: el conductor tiene envios asociados');
+      throw new ConflictException(
+        'No se puede eliminar: el conductor tiene envios asociados',
+      );
     }
   }
 }

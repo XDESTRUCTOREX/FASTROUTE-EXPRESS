@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Branch } from './branch.entity';
@@ -24,7 +28,7 @@ export class BranchesService {
   async findOne(id: number): Promise<Branch> {
     const branch = await this.branchRepository.findOneBy({ id });
     if (!branch) {
-      throw new NotFoundException(`Sucursal con id ${id} no encontrada`);
+      throw new NotFoundException('Sucursal no encontrada');
     }
     return branch;
   }
@@ -41,7 +45,9 @@ export class BranchesService {
       await this.branchRepository.remove(branch);
       return { message: `Sucursal "${branch.name}" eliminada correctamente` };
     } catch {
-      throw new ConflictException('No se puede eliminar: la sucursal tiene envios asociados');
+      throw new ConflictException(
+        'No se puede eliminar: la sucursal tiene envios asociados',
+      );
     }
   }
 }

@@ -6,7 +6,7 @@ jest.mock('@nestjs/typeorm', () => ({
   InjectRepository: () => () => undefined,
 }));
 
-import { Customer } from './entities/customer.entity';
+import { Customer } from './customer.entity';
 import { CustomersService } from './customers.service';
 
 describe('CustomersService', () => {
@@ -29,10 +29,9 @@ describe('CustomersService', () => {
 
     await expect(
       service.create({
-        fullName: 'Luis Gomez',
+        name: 'Luis Gomez',
         email: 'luis@example.com',
         phone: '3001234567',
-        address: 'Calle 1 # 2-3',
       }),
     ).rejects.toBeInstanceOf(ConflictException);
   });
