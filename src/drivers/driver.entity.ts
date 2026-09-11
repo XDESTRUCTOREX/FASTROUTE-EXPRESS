@@ -15,6 +15,9 @@ export class Driver {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
+  @Column({ type: 'boolean', default: true })
+  isActive: boolean;
+
   @OneToMany(() => Shipment, (shipment) => shipment.driver)
   shipments: Shipment[];
 }

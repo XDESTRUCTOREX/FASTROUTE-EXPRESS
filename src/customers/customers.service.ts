@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateCustomerDto } from './dto/create-customer.dto';
 import { UpdateCustomerDto } from './dto/update-customer.dto';
-import { Customer } from './entities/customer.entity';
+import { Customer } from './customer.entity';
 
 @Injectable()
 export class CustomersService {
@@ -30,7 +30,6 @@ export class CustomersService {
   findAll(email?: string): Promise<Customer[]> {
     return this.customersRepository.find({
       where: email === undefined ? undefined : { email },
-      order: { createdAt: 'DESC' },
     });
   }
 

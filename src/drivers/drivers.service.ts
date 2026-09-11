@@ -7,7 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
-import { Driver } from './entities/driver.entity';
+import { Driver } from './driver.entity';
 
 @Injectable()
 export class DriversService {
@@ -25,8 +25,10 @@ export class DriversService {
     return this.driverRepository.save(driver);
   }
 
-  findAll(): Promise<Driver[]> {
-    return this.driverRepository.find();
+  findAll(isActive?: boolean): Promise<Driver[]> {
+    return this.driverRepository.find({
+      where: isActive === undefined ? undefined : { isActive },
+    });
   }
 
   async findOne(id: number): Promise<Driver> {
