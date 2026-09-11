@@ -64,7 +64,9 @@ export class CustomersService {
       await this.customersRepository.remove(customer);
       return { message: `Cliente "${customer.name}" eliminado correctamente` };
     } catch {
-      throw new ConflictException('No se puede eliminar: el cliente tiene envios asociados');
+      throw new ConflictException(
+        'No se puede eliminar: el cliente tiene envios asociados',
+      );
     }
   }
 }

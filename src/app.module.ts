@@ -20,7 +20,9 @@ import { ShipmentsModule } from './shipments/shipments.module';
         password: configService.get<string>('DB_PASSWORD', ''),
         database: configService.get<string>('DB_DATABASE', 'fastroute'),
         autoLoadEntities: true,
-        synchronize: configService.get<string>('NODE_ENV') !== 'production',
+        synchronize:
+          configService.get<string>('DB_SYNCHRONIZE', 'true') === 'true' &&
+          configService.get<string>('NODE_ENV') !== 'production',
       }),
     }),
     DriversModule,

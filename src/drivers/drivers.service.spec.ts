@@ -7,7 +7,7 @@ jest.mock('@nestjs/typeorm', () => ({
 }));
 
 import { DriversService } from './drivers.service';
-import { Driver } from './entities/driver.entity';
+import { Driver } from './driver.entity';
 
 describe('DriversService', () => {
   let service: DriversService;
@@ -15,41 +15,40 @@ describe('DriversService', () => {
 
   beforeEach(() => {
     repository = {
-      findOne: jest.fn(),
+      findOneBy: jest.fn(),
       create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
+      remove: jest.fn(),
     };
     service = new DriversService(repository as Repository<Driver>);
   });
 
   it('rechaza una licencia duplicada al crear', async () => {
-    repository.findOne!.mockResolvedValue({ id: 1 } as Driver);
+    repository.findOneBy!.mockResolvedValue({ id: 1 } as Driver);
 
     await expect(
       service.create({
-        fullName: 'Ana Perez',
-        licenseNumber: 'LIC-001',
+        name: 'Ana Perez',
+        license: 'LIC-001',
         phone: '3001234567',
       }),
     ).rejects.toBeInstanceOf(ConflictException);
   });
 
-  it('desactiva lógicamente un conductor existente', async () => {
-    const driver = {
-      id: 1,
-      isActive: true,
-    } as Driver;
-    repository.findOne!.mockResolvedValue(driver);
-    repository.save!.mockResolvedValue(driver);
+  it('elimina un conductor existente', async () => {
+    const driver = { id: 1, name: 'Ana Perez' } as Driver;
+    repository.findOneBy!.mockResolvedValue(driver);
+    repository.remove!.mockResolvedValue(driver);
 
-    await expect(service.remove(1)).resolves.toBe(driver);
-    expect(driver.isActive).toBe(false);
-    expect(repository.save).toHaveBeenCalledWith(driver);
+    await expect(service.remove(1)).resolves.toEqual({
+      message: 'Conductor "Ana Perez" eliminado correctamente',
+    });
+    expect(repository.remove).toHaveBeenCalledWith(driver);
   });
 
   it('lanza NotFoundException cuando el conductor no existe', async () => {
-    repository.findOne!.mockResolvedValue(null);
+    repository.findOneBy!.mockResolvedValue(null);
 
     await expect(service.findOne(999)).rejects.toBeInstanceOf(
       NotFoundException,
