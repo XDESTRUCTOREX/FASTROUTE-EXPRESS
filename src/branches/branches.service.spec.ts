@@ -1,15 +1,23 @@
-import { Test, TestingModule } from '@nestjs/testing';
+import { Repository } from 'typeorm';
+jest.mock('@nestjs/typeorm', () => ({
+  InjectRepository: () => () => undefined,
+}));
 import { BranchesService } from './branches.service';
+import { Branch } from './branch.entity';
 
 describe('BranchesService', () => {
   let service: BranchesService;
+  let repository: jest.Mocked<Partial<Repository<Branch>>>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [BranchesService],
-    }).compile();
-
-    service = module.get<BranchesService>(BranchesService);
+  beforeEach(() => {
+    repository = {
+      create: jest.fn(),
+      find: jest.fn(),
+      findOneBy: jest.fn(),
+      save: jest.fn(),
+      remove: jest.fn(),
+    };
+    service = new BranchesService(repository as Repository<Branch>);
   });
 
   it('should be defined', () => {

@@ -1,6 +1,13 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { existsSync } from 'node:fs';
+import { loadEnvFile } from 'node:process';
+import 'dotenv/config';
 import { AppModule } from './app.module';
+
+if (existsSync('.env')) {
+  loadEnvFile();
+}
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -11,6 +18,9 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(process.env.PORT ?? 3000);
+  const port = Number(process.env.PORT ?? 3000);
+  await app.listen(port);
+  console.log(`FastRoute Express corriendo en: http://localhost:${port}`);
 }
+
 void bootstrap();

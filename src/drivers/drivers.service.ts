@@ -7,68 +7,49 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDriverDto } from './dto/create-driver.dto';
 import { UpdateDriverDto } from './dto/update-driver.dto';
-import { Driver } from './entities/driver.entity';
+import { Driver } from './driver.entity';
 
 @Injectable()
 export class DriversService {
   constructor(
     @InjectRepository(Driver)
-    private readonly driversRepository: Repository<Driver>,
+    private readonly driverRepository: Repository<Driver>,
   ) {}
 
-  async create(createDriverDto: CreateDriverDto): Promise<Driver> {
-    const existingDriver = await this.driversRepository.findOne({
-      where: { licenseNumber: createDriverDto.licenseNumber },
-    });
-
-    if (existingDriver) {
-      throw new ConflictException('La licencia ya está registrada');
+  async create(dto: CreateDriverDto): Promise<Driver> {
+    const exists = await this.driverRepository.findOneBy({ license: dto.license });
+    if (exists) {
+      throw new ConflictException(`Ya existe un conductor con la licencia ${dto.license}`);
     }
-
-    const driver = this.driversRepository.create(createDriverDto);
-    return this.driversRepository.save(driver);
+    const driver = this.driverRepository.create(dto);
+    return this.driverRepository.save(driver);
   }
 
   findAll(isActive?: boolean): Promise<Driver[]> {
-    return this.driversRepository.find({
+    return this.driverRepository.find({
       where: isActive === undefined ? undefined : { isActive },
-      order: { createdAt: 'DESC' },
     });
   }
 
   async findOne(id: number): Promise<Driver> {
-    const driver = await this.driversRepository.findOne({ where: { id } });
-
-    if (!driver) {
-      throw new NotFoundException(`No existe un conductor con el ID ${id}`);
-    }
-
+    const driver = await this.driverRepository.findOneBy({ id });
+    if (!driver) throw new NotFoundException(`Conductor con id ${id} no encontrado`);
     return driver;
   }
 
-  async update(id: number, updateDriverDto: UpdateDriverDto): Promise<Driver> {
+  async update(id: number, dto: UpdateDriverDto): Promise<Driver> {
     const driver = await this.findOne(id);
-
-    if (
-      updateDriverDto.licenseNumber &&
-      updateDriverDto.licenseNumber !== driver.licenseNumber
-    ) {
-      const existingDriver = await this.driversRepository.findOne({
-        where: { licenseNumber: updateDriverDto.licenseNumber },
-      });
-
-      if (existingDriver) {
-        throw new ConflictException('La licencia ya está registrada');
-      }
-    }
-
-    Object.assign(driver, updateDriverDto);
-    return this.driversRepository.save(driver);
+    Object.assign(driver, dto);
+    return this.driverRepository.save(driver);
   }
 
-  async remove(id: number): Promise<Driver> {
+  async remove(id: number): Promise<{ message: string }> {
     const driver = await this.findOne(id);
-    driver.isActive = false;
-    return this.driversRepository.save(driver);
+    try {
+      await this.driverRepository.remove(driver);
+      return { message: `Conductor "${driver.name}" eliminado correctamente` };
+    } catch {
+      throw new ConflictException('No se puede eliminar: el conductor tiene envios asociados');
+    }
   }
 }

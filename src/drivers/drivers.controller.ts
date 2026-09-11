@@ -40,11 +40,8 @@ export class DriversController {
   }
 
   @Patch(':id')
-  update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateDriverDto: UpdateDriverDto,
-  ) {
-    return this.driversService.update(id, updateDriverDto);
+  update(@Param('id', ParseIntPipe) id: number, @Body() dto: UpdateDriverDto) {
+    return this.driversService.update(id, dto);
   }
 
   @Delete(':id')

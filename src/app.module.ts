@@ -1,13 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { PackageModule } from './package/package.module';
 import { DriversModule } from './drivers/drivers.module';
 import { CustomersModule } from './customers/customers.module';
-import { BranchModule } from './branch/branch.module';
 import { BranchesModule } from './branches/branches.module';
+import { PackagesModule } from './packages/packages.module';
+import { ShipmentsModule } from './shipments/shipments.module';
 
 @Module({
   imports: [
@@ -25,13 +23,11 @@ import { BranchesModule } from './branches/branches.module';
         synchronize: configService.get<string>('NODE_ENV') !== 'production',
       }),
     }),
-    PackageModule,
     DriversModule,
     CustomersModule,
-    BranchModule,
     BranchesModule,
+    PackagesModule,
+    ShipmentsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
