@@ -6,12 +6,14 @@ import {
 
 @Entity('packages')
 export class Package {
+
   @PrimaryGeneratedColumn()
-  id: number;
+  id!: number;
 
   @Column({ type: 'varchar', length: 200 })
-  description: string;
+  description!: string;
 
   @Column({ type: 'decimal', precision: 8, scale: 2 })
-  weight: number;
+  weight!: number;
+
 }
