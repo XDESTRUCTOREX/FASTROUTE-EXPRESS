@@ -25,7 +25,7 @@ export class Branch {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone!: string | null;
 
-  @OneToMany(() => Shipment, (shipment) => shipment.originBranch)
+  @OneToMany(() => Shipment, (shipment) => shipment.branch)
   shipments!: Shipment[];
 
   @CreateDateColumn()

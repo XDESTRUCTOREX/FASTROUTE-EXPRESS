@@ -39,12 +39,12 @@ export class ShipmentsService {
         `Conductor con id ${dto.driverId} no encontrado`,
       );
 
-    const originBranch = await this.branchRepository.findOneBy({
-      id: dto.originBranchId,
+    const branch = await this.branchRepository.findOneBy({
+      id: dto.branchId,
     });
-    if (!originBranch) {
+    if (!branch) {
       throw new NotFoundException(
-        `Sucursal con id ${dto.originBranchId} no encontrada`,
+        `Sucursal con id ${dto.branchId} no encontrada`,
       );
     }
 
@@ -56,7 +56,7 @@ export class ShipmentsService {
       destination: dto.destination,
       customer,
       driver,
-      originBranch,
+      branch,
       totalCost,
       packages: dto.packages,
     });
@@ -74,7 +74,6 @@ export class ShipmentsService {
       relations: {
         customer: true,
         driver: true,
-        originBranch: true,
         packages: true,
       },
     });
@@ -86,7 +85,7 @@ export class ShipmentsService {
       .createQueryBuilder('shipment')
       .leftJoinAndSelect('shipment.customer', 'customer')
       .leftJoinAndSelect('shipment.driver', 'driver')
-      .leftJoinAndSelect('shipment.originBranch', 'branch')
+      .leftJoinAndSelect('shipment.branch', 'branch')
       .leftJoinAndSelect('shipment.packages', 'packages')
       .where('shipment.id = :id', { id })
       .getOne();
@@ -110,10 +109,10 @@ export class ShipmentsService {
         id: shipment.driver.id,
         name: shipment.driver.name,
       },
-      originBranch: {
-        id: shipment.originBranch.id,
-        name: shipment.originBranch.name,
-        city: shipment.originBranch.city,
+      branch: {
+        id: shipment.branch.id,
+        name: shipment.branch.name,
+        city: shipment.branch.city,
       },
       packages: shipment.packages,
       resumen: {
@@ -129,13 +128,18 @@ export class ShipmentsService {
   async findAllPaginated(
     page: number = 1,
     limit: number = 10,
-    filters: { customerId?: number; branchId?: number; date?: string },
+    filters: {
+      customerId?: number;
+      branchId?: number;
+      dateFrom?: string;
+      dateTo?: string;
+    },
   ) {
     const queryBuilder = this.shipmentRepository
       .createQueryBuilder('shipment')
       .leftJoinAndSelect('shipment.customer', 'customer')
       .leftJoinAndSelect('shipment.driver', 'driver')
-      .leftJoinAndSelect('shipment.originBranch', 'branch');
+      .leftJoinAndSelect('shipment.branch', 'branch');
 
     if (filters.customerId) {
       queryBuilder.andWhere('customer.id = :customerId', {
@@ -149,9 +153,15 @@ export class ShipmentsService {
       });
     }
 
-    if (filters.date) {
-      queryBuilder.andWhere('DATE(shipment.createdAt) = :date', {
-        date: filters.date,
+    if (filters.dateFrom) {
+      queryBuilder.andWhere('shipment.createdAt >= :dateFrom', {
+        dateFrom: filters.dateFrom,
+      });
+    }
+
+    if (filters.dateTo) {
+      queryBuilder.andWhere('shipment.createdAt <= :dateTo', {
+        dateTo: filters.dateTo,
       });
     }
 

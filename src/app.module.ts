@@ -21,7 +21,7 @@ import { ShipmentsModule } from './shipments/shipments.module';
         database: configService.get<string>('DB_DATABASE', 'fastroute'),
         autoLoadEntities: true,
         synchronize:
-          configService.get<string>('DB_SYNCHRONIZE', 'false') === 'true' &&
+          configService.get<string>('DB_SYNCHRONIZE', 'true') === 'true' &&
           configService.get<string>('NODE_ENV') !== 'production',
       }),
     }),

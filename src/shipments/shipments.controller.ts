@@ -22,14 +22,15 @@ export class ShipmentsController {
     return this.shipmentsService.create(dto);
   }
 
-  // Ejemplo: /shipments?page=1&limit=10&customerId=1&branchId=2&date=2025-05-10
+  // Ejemplo: /shipments?page=1&limit=10&customerId=1&branchId=2
   @Get()
   findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
     @Query('customerId') customerId?: string,
     @Query('branchId') branchId?: string,
-    @Query('date') date?: string,
+    @Query('dateFrom') dateFrom?: string,
+    @Query('dateTo') dateTo?: string,
   ) {
     return this.shipmentsService.findAllPaginated(
       Number(page) || 1,
@@ -37,7 +38,8 @@ export class ShipmentsController {
       {
         customerId: customerId ? Number(customerId) : undefined,
         branchId: branchId ? Number(branchId) : undefined,
-        date: date || undefined,
+        dateFrom: dateFrom || undefined,
+        dateTo: dateTo || undefined,
       },
     );
   }
